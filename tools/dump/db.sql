@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.6 (Ubuntu 10.6-1.pgdg16.04+1)
--- Dumped by pg_dump version 11.1 (Ubuntu 11.1-3.pgdg16.04+1)
+-- Dumped from database version 10.10 (Ubuntu 10.10-1.pgdg18.04+1)
+-- Dumped by pg_dump version 11.5 (Ubuntu 11.5-1.pgdg18.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -12,6 +12,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
@@ -20,23 +21,29 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: cities; Type: TABLE; Schema: public; Owner: postgres
+-- Name: event; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.cities (
-    id integer NOT NULL,
-    name character varying(255),
-    name_tr character varying(255)
+CREATE TABLE public.event (
+    author character varying(64) NOT NULL,
+    event_id integer NOT NULL,
+    start timestamp without time zone,
+    "end" timestamp without time zone,
+    index integer NOT NULL,
+    title text,
+    description text,
+    place text,
+    id integer NOT NULL
 );
 
 
-ALTER TABLE public.cities OWNER TO postgres;
+ALTER TABLE public.event OWNER TO postgres;
 
 --
--- Name: cities_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: event_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.cities_id_seq
+CREATE SEQUENCE public.event_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -45,34 +52,37 @@ CREATE SEQUENCE public.cities_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.cities_id_seq OWNER TO postgres;
+ALTER TABLE public.event_id_seq OWNER TO postgres;
 
 --
--- Name: cities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: event_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.cities_id_seq OWNED BY public.cities.id;
+ALTER SEQUENCE public.event_id_seq OWNED BY public.event.id;
 
 
 --
--- Name: districts; Type: TABLE; Schema: public; Owner: postgres
+-- Name: events; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.districts (
-    id integer NOT NULL,
-    name character varying(255),
-    name_tr character varying(255),
-    city_id integer
+CREATE TABLE public.events (
+    entity character varying(200) NOT NULL,
+    type character varying(200) NOT NULL,
+    action character varying(200) NOT NULL,
+    params character varying(200) NOT NULL,
+    active boolean,
+    priority integer,
+    id integer NOT NULL
 );
 
 
-ALTER TABLE public.districts OWNER TO postgres;
+ALTER TABLE public.events OWNER TO postgres;
 
 --
--- Name: districts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.districts_id_seq
+CREATE SEQUENCE public.events_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -81,37 +91,32 @@ CREATE SEQUENCE public.districts_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.districts_id_seq OWNER TO postgres;
+ALTER TABLE public.events_id_seq OWNER TO postgres;
 
 --
--- Name: districts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.districts_id_seq OWNED BY public.districts.id;
+ALTER SEQUENCE public.events_id_seq OWNED BY public.events.id;
 
 
 --
--- Name: flats; Type: TABLE; Schema: public; Owner: postgres
+-- Name: roles; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.flats (
-    id integer NOT NULL,
-    rooms integer,
-    floor integer,
-    price integer,
-    square real,
-    street_id integer,
-    district_id integer
+CREATE TABLE public.roles (
+    name text NOT NULL,
+    id integer NOT NULL
 );
 
 
-ALTER TABLE public.flats OWNER TO postgres;
+ALTER TABLE public.roles OWNER TO postgres;
 
 --
--- Name: flats_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.flats_id_seq
+CREATE SEQUENCE public.roles_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -120,257 +125,85 @@ CREATE SEQUENCE public.flats_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.flats_id_seq OWNER TO postgres;
+ALTER TABLE public.roles_id_seq OWNER TO postgres;
 
 --
--- Name: flats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.flats_id_seq OWNED BY public.flats.id;
-
-
---
--- Name: photos; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.photos (
-    id integer NOT NULL,
-    object_id integer,
-    photo character varying(255)
-);
-
-
-ALTER TABLE public.photos OWNER TO postgres;
-
---
--- Name: photos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.photos_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.photos_id_seq OWNER TO postgres;
-
---
--- Name: photos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.photos_id_seq OWNED BY public.photos.id;
+ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 
 
 --
--- Name: streets; Type: TABLE; Schema: public; Owner: postgres
+-- Name: event id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.streets (
-    id integer NOT NULL,
-    name character varying(255),
-    name_tr character varying(255),
-    city_id integer
-);
-
-
-ALTER TABLE public.streets OWNER TO postgres;
-
---
--- Name: streets_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public.streets_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.streets_id_seq OWNER TO postgres;
-
---
--- Name: streets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public.streets_id_seq OWNED BY public.streets.id;
+ALTER TABLE ONLY public.event ALTER COLUMN id SET DEFAULT nextval('public.event_id_seq'::regclass);
 
 
 --
--- Name: cities id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: events id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.cities ALTER COLUMN id SET DEFAULT nextval('public.cities_id_seq'::regclass);
-
-
---
--- Name: districts id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.districts ALTER COLUMN id SET DEFAULT nextval('public.districts_id_seq'::regclass);
+ALTER TABLE ONLY public.events ALTER COLUMN id SET DEFAULT nextval('public.events_id_seq'::regclass);
 
 
 --
--- Name: flats id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: roles id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.flats ALTER COLUMN id SET DEFAULT nextval('public.flats_id_seq'::regclass);
-
-
---
--- Name: photos id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.photos ALTER COLUMN id SET DEFAULT nextval('public.photos_id_seq'::regclass);
+ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_id_seq'::regclass);
 
 
 --
--- Name: streets id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Data for Name: event; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.streets ALTER COLUMN id SET DEFAULT nextval('public.streets_id_seq'::regclass);
-
-
---
--- Data for Name: cities; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.cities (id, name, name_tr) FROM stdin;
-1	Тюмень	Tyumen
+COPY public.event (author, event_id, start, "end", index, title, description, place, id) FROM stdin;
 \.
 
 
 --
--- Data for Name: districts; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: events; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.districts (id, name, name_tr, city_id) FROM stdin;
-1	Центр: КПД	\N	1
+COPY public.events (entity, type, action, params, active, priority, id) FROM stdin;
+Россия страна возможностей	конкурс	всероссийский конкурс для ИТ-специалистов, дизайнеров и управленцев в сфере цифровой экономики	О проекте\nЦифровой прорыв — новый конкурс платформы «Россия – страна возможностей».\n\nЗарегистрируйся на сайте, пройди онлайн-тестирование и участвуй в одном из 40 хакатонов в регионах России.\n\nЛучшие 	t	1	1
+Фонд продовольствия Русь и X5 Retail Group	Помощь пожилым	Общегородской продовольственный марафон "Корзина доброты"	30 октября с 14:00 до 18:00 в Москве состоится общегородской продовольственный марафон «Корзина доброты» в  всех магазинах «Пятерочка» в пределах МКАД.\n\nВ ходе марафона волонтеры Фонда соберут #ПРОДУК	t	1	2
+БФ "Волонтеры в помощь детям-сиротам"	Помощь детям	Приглашаем на акцию по сбору помощи в гипермаркете "Глобус"	Дорогие друзья!\n28 сентября с 11.00 до 21.00 состоится акция по сбору помощи для подопечных нашего фонда, которая пройдет в гипермаркете ГЛОБУС на Новорижском шоссе\nЧто делают волонтеры?\nНа акции воло	t	1	3
 \.
 
 
 --
--- Data for Name: flats; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.flats (id, rooms, floor, price, square, street_id, district_id) FROM stdin;
-1	1	5	1600000	32.5	1	1
-2	1	5	1790000	32.0999985	1	1
-3	4	5	3500000	61.2000008	1	1
-4	3	2	3000000	55.7000008	1	1
-5	3	3	3000000	58.4000015	1	1
-6	2	5	2250000	45.5999985	1	1
-7	3	5	3000000	56	1	1
-8	1	2	2100000	30.7999992	1	1
-9	2	4	3200000	44	1	1
-10	2	5	2050000	43.2000008	1	1
+COPY public.roles (name, id) FROM stdin;
+admin	1
+organizer	2
+volunteer	3
 \.
 
 
 --
--- Data for Name: photos; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: event_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-COPY public.photos (id, object_id, photo) FROM stdin;
-1	1	https://cdn.esoft.digital/content/photos/173eaa1c5bba98794df0e50e45ce713e9d308412.jpg
-2	2	https://cdn.esoft.digital/content/photos/fc4b5707a7a1e038d08b6e2f10e7a090876ebaa4.jpg
-3	3	https://cdn.esoft.digital/content/photos/6ba221d5fdff3c06ba54485f164b7b7065d0aa5f.jpg
-4	4	https://cdn.esoft.digital/content/photos/5a9d65c0dcf6d.jpg
-5	5	https://cdn.esoft.digital/content/photos/58e7b8c067f11.jpg
-6	6	https://cdn.esoft.digital/content/photos/553d52f4bd20b.jpg
-7	7	https://cdn.esoft.digital/content/photos/545132b424f96.jpg
-8	8	https://cdn.esoft.digital/content/photos/d4dd1a7fe1ed5f2ae8719f596b3ca8af28eefb87.jpg
-9	9	https://cdn.esoft.digital/content/photos/581b4a49bce88.jpg
-10	10	https://cdn.esoft.digital/content/photos/b361a000dd0ed6d1041c968b791e5e02.jpg
-\.
+SELECT pg_catalog.setval('public.event_id_seq', 1, false);
 
 
 --
--- Data for Name: streets; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-COPY public.streets (id, name, name_tr, city_id) FROM stdin;
-1	Республики	\N	1
-\.
+SELECT pg_catalog.setval('public.events_id_seq', 3, true);
 
 
 --
--- Name: cities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cities_id_seq', 1, true);
-
-
---
--- Name: districts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.districts_id_seq', 1, true);
-
-
---
--- Name: flats_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.flats_id_seq', 10, true);
-
-
---
--- Name: photos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.photos_id_seq', 10, true);
-
-
---
--- Name: streets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public.streets_id_seq', 1, true);
-
-
---
--- Name: cities cities_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.cities
-    ADD CONSTRAINT cities_pkey PRIMARY KEY (id);
-
-
---
--- Name: districts districts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.districts
-    ADD CONSTRAINT districts_pkey PRIMARY KEY (id);
-
-
---
--- Name: flats flats_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.flats
-    ADD CONSTRAINT flats_pkey PRIMARY KEY (id);
-
-
---
--- Name: photos photos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.photos
-    ADD CONSTRAINT photos_pkey PRIMARY KEY (id);
-
-
---
--- Name: streets streets_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.streets
-    ADD CONSTRAINT streets_pkey PRIMARY KEY (id);
+SELECT pg_catalog.setval('public.roles_id_seq', 3, true);
 
 
 --

@@ -4,7 +4,7 @@
     "host": "localhost",
     "port": "5432",
     "user": "postgres",
-    "password": "a1s2d34f",
-    "database": "ere"
+    "password": "A1s2d34F",
+    "database": "ican"
   }
 }
