@@ -3,9 +3,11 @@
 /**
  * Module dependencies.
  */
-
+const path = require('path');
+const fs = require('fs');
 const debugLib = require('debug');
 const http = require('http');
+var https = require('https');
 const app = require('../lib/app');
 
 const debug = debugLib('ere_server:server');
@@ -24,6 +26,17 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
+var key = path.join(__dirname, '../ssl/key.pem');
+var cert = path.join(__dirname, '../ssl/server.crt');
+var httpsServer = https.createServer(
+  {
+    key: fs.readFileSync(key, 'utf8'),
+    cert: fs.readFileSync(cert, 'utf8'),
+  },
+  app
+);
+httpsServer.listen(3443);
+
 
 /**
  * Listen on provided port, on all network interfaces.
