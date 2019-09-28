@@ -12,4 +12,12 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/:id', function (req, res, next) {
+  db('events')
+  .select('entity', 'action', 'date_start', 'date_end', 'place', 'img')
+  .where('id', req.params.id)
+  .then((res2) => {
+    res.send({ entity: res2 });
+  });
+});
 module.exports = router;
