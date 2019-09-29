@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
   db('events')
     .select('id', 'entity', 'action', 'date_start', 'date_end', 'place', 'img')
+    .orderBy('id', 'asc')
     .then((res2) => {
       res.send({ entitys: res2 });
     });
